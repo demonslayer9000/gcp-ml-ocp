@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edge-automl-flowers-ec
+spec:
+  selector:
+    matchLabels:
+      app: edge-automl-flowers-ec
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: edge-automl-flowers-ec
+    spec:
+      terminationGracePeriodSeconds: 30
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: edge-automl-flowers-ec
+          imagePullPolicy: Always
+          image: ghcr.io/demonslayer9000/gcp-automl-in-a-container:endpoint-client-latest
+          ports:
+            - containerPort: 8080
+              name: web
+          volumeMounts:
+          - name: gcp-credentials
+            mountPath: "/tmp/gcp-credentials/"
+            readOnly: true
+          env:
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              valueFrom:
+                secretKeyRef:
+                  name: edge-automl-flowers-secrets
+                  key: GOOGLE_APPLICATION_CREDENTIALS
+
+            - name: GCP_PROJECT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: edge-automl-flowers-secrets
+                  key: GCP_PROJECT_ID
+
+            - name: GCP_AI_ENDPOINT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: edge-automl-flowers-secrets
+                  key: GCP_AI_ENDPOINT_ID
+
+            - name: GCP_LOCATION
+              valueFrom:
+                secretKeyRef:
+                  name: edge-automl-flowers-secrets
+                  key: GCP_LOCATION
+                  optional: true
+
+      volumes:
+      - name: gcp-credentials
+        secret:
+          secretName: gcp-credentials
+          optional: false
+          items:
+          - key: sa
+            path: gcp-service-account-file.json
