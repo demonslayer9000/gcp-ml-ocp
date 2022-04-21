@@ -51,3 +51,4 @@ sudo docker run --name automl-web-server --rm \
  -e GCP_AI_ENDPOINT_URL=<your edge container url> \
  -p 8080:8080 automl-web-server
 ```
+
