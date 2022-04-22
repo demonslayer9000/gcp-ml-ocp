@@ -14,12 +14,12 @@ spec:
         app: edge-automl-flowers-ms
     spec:
       terminationGracePeriodSeconds: 30
-      imagePullSecrets:
-        - name: regcred
+      #imagePullSecrets:
+        #- name: regcred
       containers:
         - name: edge-automl-flowers-ms
           imagePullPolicy: Always
-          image: ghcr.io/demonslayer9000/gcp-automl-in-a-container:model-server-latest
+          image: ghcr.io/demonslayer9000/gcp-ml-ocp:model-server-latest
           ports:
             - containerPort: 8080
               name: web
